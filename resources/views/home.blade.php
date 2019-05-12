@@ -14,7 +14,7 @@
                         </div>
                     @endif
 
-                    You are logged in!
+                    <task-component></task-component>
                 </div>
             </div>
         </div>
