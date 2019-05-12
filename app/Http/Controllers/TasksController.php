@@ -54,7 +54,7 @@ class TasksController extends Controller
             'body' => $request->input('body'),
         ]);
 
-        return response()->json(['task' => $task, 'message' => 'Task has benn created'], 200);
+        return response()->json(['task' => $task, 'message' => 'Task has been created'], 200);
     }
 
     /**
