@@ -90,8 +90,8 @@ class TasksController extends Controller
     {
         //
         $request->validate([
-            'name' => $request->input('name'),
-            'body' => $request->input('body'),
+            'name' => 'required',
+            'body' => 'required',
         ]);
 
         $task = $request->user()->tasks()->whereId($id)->update($request->all());

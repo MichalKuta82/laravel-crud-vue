@@ -1858,6 +1858,37 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -1867,7 +1898,8 @@ __webpack_require__.r(__webpack_exports__);
       },
       tasks: [],
       uri: 'http://laravel-crud-vue.local/tasks',
-      errors: []
+      errors: [],
+      new_update_task: []
     };
   },
   methods: {
@@ -1878,6 +1910,14 @@ __webpack_require__.r(__webpack_exports__);
         _this.tasks = response.data.tasks; //assign response from the backend to an empty array tasks: []
       });
     },
+    loadCreateModal: function loadCreateModal() {
+      $("#create-modal").modal("show");
+    },
+    loadUpdateModal: function loadUpdateModal(index) {
+      this.errors = [];
+      $("#update-modal").modal("show");
+      this.new_update_task = this.tasks[index];
+    },
     createTask: function createTask() {
       var _this2 = this;
 
@@ -1886,6 +1926,8 @@ __webpack_require__.r(__webpack_exports__);
         body: this.task.body
       }).then(function (response) {
         _this2.tasks.push(response.data.task);
+
+        _this2.resetData();
 
         $("#create-modal").modal("hide");
       })["catch"](function (error) {
@@ -1900,8 +1942,41 @@ __webpack_require__.r(__webpack_exports__);
         }
       });
     },
-    createModal: function createModal() {
-      $("#create-modal").modal("show");
+    updateTask: function updateTask() {
+      var _this3 = this;
+
+      axios.patch(this.uri + "/" + this.new_update_task.id, {
+        name: this.new_update_task.name,
+        body: this.new_update_task.body
+      }).then(function (respose) {
+        $("#update-modal").modal("hide");
+      })["catch"](function (error) {
+        if (error.response.data.errors.name) {
+          _this3.errors.push(error.response.data.errors.name[0]);
+        }
+
+        if (error.response.data.errors.body) {
+          _this3.errors.push(error.response.data.errors.body[0]);
+        }
+      });
+    },
+    deleteTask: function deleteTask(index) {
+      var _this4 = this;
+
+      var confirmBox = confirm("Do you really want to delete this?");
+
+      if (confirmBox == true) {
+        axios["delete"](this.uri + "/" + this.tasks[index].id).then(function (response) {
+          _this4.$delete(_this4.tasks, index); // Vue.delete(this.task, index)
+
+        })["catch"](function (error) {
+          console.log("could not delete");
+        });
+      }
+    },
+    resetData: function resetData() {
+      this.task.name = '';
+      this.task.body = '';
     }
   },
   mounted: function mounted() {
@@ -37264,7 +37339,7 @@ var render = function() {
           "button",
           {
             staticClass: "btn btn-primary btn-block",
-            on: { click: _vm.createModal }
+            on: { click: _vm.loadCreateModal }
           },
           [_vm._v("Add New Task")]
         ),
@@ -37287,9 +37362,35 @@ var render = function() {
                     _vm._v(" "),
                     _c("td", [_vm._v(_vm._s(task.body))]),
                     _vm._v(" "),
-                    _vm._m(1, true),
+                    _c("td", [
+                      _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-info btn-sm",
+                          on: {
+                            click: function($event) {
+                              return _vm.loadUpdateModal(index)
+                            }
+                          }
+                        },
+                        [_vm._v("Edit")]
+                      )
+                    ]),
                     _vm._v(" "),
-                    _vm._m(2, true)
+                    _c("td", [
+                      _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-danger btn-sm",
+                          on: {
+                            click: function($event) {
+                              return _vm.deleteTask(index)
+                            }
+                          }
+                        },
+                        [_vm._v("Delete")]
+                      )
+                    ])
                   ])
                 }),
                 0
@@ -37315,7 +37416,7 @@ var render = function() {
               { staticClass: "modal-dialog", attrs: { role: "document" } },
               [
                 _c("div", { staticClass: "modal-content" }, [
-                  _vm._m(3),
+                  _vm._m(1),
                   _vm._v(" "),
                   _c("div", { staticClass: "modal-body" }, [
                     _vm.errors.length > 0
@@ -37407,6 +37508,126 @@ var render = function() {
               ]
             )
           ]
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            staticClass: "modal fade",
+            attrs: {
+              id: "update-modal",
+              tabindex: "-1",
+              role: "dialog",
+              "aria-labelledby": "exampleModalLabel",
+              "aria-hidden": "true"
+            }
+          },
+          [
+            _c(
+              "div",
+              { staticClass: "modal-dialog", attrs: { role: "document" } },
+              [
+                _c("div", { staticClass: "modal-content" }, [
+                  _vm._m(2),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "modal-body" }, [
+                    _vm.errors.length > 0
+                      ? _c("div", { staticClass: "alert alert-danger" }, [
+                          _c(
+                            "ul",
+                            _vm._l(_vm.errors, function(error) {
+                              return _c("li", [_vm._v(_vm._s(error))])
+                            }),
+                            0
+                          )
+                        ])
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "form-group" }, [
+                      _c("label", { attrs: { for: "name" } }, [_vm._v("Name")]),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.new_update_task.name,
+                            expression: "new_update_task.name"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: { type: "text", name: "", id: "name" },
+                        domProps: { value: _vm.new_update_task.name },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(
+                              _vm.new_update_task,
+                              "name",
+                              $event.target.value
+                            )
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c("label", { attrs: { for: "description" } }, [
+                        _vm._v("Description")
+                      ]),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.new_update_task.body,
+                            expression: "new_update_task.body"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: { type: "text", name: "", id: "description" },
+                        domProps: { value: _vm.new_update_task.body },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(
+                              _vm.new_update_task,
+                              "body",
+                              $event.target.value
+                            )
+                          }
+                        }
+                      })
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "modal-footer" }, [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-secondary",
+                        attrs: { type: "button", "data-dismiss": "modal" }
+                      },
+                      [_vm._v("Close")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary",
+                        attrs: { type: "button" },
+                        on: { click: _vm.updateTask }
+                      },
+                      [_vm._v("Save changes")]
+                    )
+                  ])
+                ])
+              ]
+            )
+          ]
         )
       ])
     ])
@@ -37431,16 +37652,25 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("td", [
-      _c("button", { staticClass: "btn btn-info btn-sm" }, [_vm._v("Edit")])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("td", [
-      _c("button", { staticClass: "btn btn-danger btn-sm" }, [_vm._v("Delete")])
+    return _c("div", { staticClass: "modal-header" }, [
+      _c(
+        "h5",
+        { staticClass: "modal-title", attrs: { id: "exampleModalLabel" } },
+        [_vm._v("Create Modal")]
+      ),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass: "close",
+          attrs: {
+            type: "button",
+            "data-dismiss": "modal",
+            "aria-label": "Close"
+          }
+        },
+        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+      )
     ])
   },
   function() {
@@ -37451,7 +37681,7 @@ var staticRenderFns = [
       _c(
         "h5",
         { staticClass: "modal-title", attrs: { id: "exampleModalLabel" } },
-        [_vm._v("Create Modal")]
+        [_vm._v("Update Modal")]
       ),
       _vm._v(" "),
       _c(
